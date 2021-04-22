@@ -1,44 +1,44 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityProps} from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, TouchableOpacityProps } from 'react-native';
 
 import colors from '../styles/colors';
+import fonts from '../styles/fonts';
 
 // Define a interface que será o tipo de parametro que temos que passar para usar o botão
 // Extende as propriedades da interface do TouchableOpacityProps
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-};
+
+}
 
 //Desistruturando para pegar o titulo passado por props
-export function Button({ title, ...props } : ButtonProps) {
+export function Button({ title, ...props }: ButtonProps) {
   // O "..." é um spread
   return (
-    /* Propriedade activeOpacity controla como o botão vai piscar na hora de clicado */
     <TouchableOpacity 
-      style={styles.button}
+      style={styles.container}
       activeOpacity={0.7}
       { ...props }
     >
-      <Text style={styles.buttonText}>
+      <Text style={styles.text}>
         { title }
       </Text>
     </TouchableOpacity>
-  );
-}
+  )
+};
 
 const styles = StyleSheet.create({
-  button: {
+  container: {
     backgroundColor: colors.green,
+    height: 56,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 16,
-    marginBottom: 10,
-    height: 56,
-    width: 56,
   },
 
-  buttonText: {
+  text: {
+    fontSize: 16,
     color: colors.white,
-    fontSize: 24,
+    fontFamily: fonts.heading,
   },
 });

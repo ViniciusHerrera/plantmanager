@@ -26,14 +26,14 @@ interface PlantProps {
   frequency: {
     times: number;
     repeat_every: string;
-  }
+  };
 }
 
 export function PlantSelect() {
   // Cria um estado com tipagem da nossa interface e ainda passamos  o [] para informa que se trata de uma coleção de valores
   const [ enviroments, setEnviroments ] = useState<EnviromentProps[]>([]);
   const [ plants, setPlants ] = useState<PlantProps[]>([]);
-  const [ filteredPlants, setfilteredPlants ] = useState<PlantProps[]>([]);
+  const [ filteredPlants, setFilteredPlants ] = useState<PlantProps[]>([]);
   const [ enviromentSelected, setEnviromentSelected ] = useState('all');
   const [ loading, setLoading ] = useState(true); // Inicia com loading ativo
 
@@ -45,27 +45,29 @@ export function PlantSelect() {
     setEnviromentSelected(enviroment);
 
     if ( enviroment === 'all')
-      return setfilteredPlants(plants);
+      return setFilteredPlants(plants);
 
     const filtered = plants.filter(plant =>
       plant.environments.includes(enviroment)
     );
 
-    setfilteredPlants(filtered);
+    setFilteredPlants(filtered);
   }
 
   async function fetchPlants() {
-    const { data } = await api.get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`); // Adiciona a paginação no filtro
+    const { data } = await api.get(
+      `plants?_sort=name&_order=asc&_page=${page}&_limit=8`
+    ); // Adiciona a paginação no filtro
 
     if(!data) // Verifica se não tem nada para carregar
       return setLoading(true);
 
     if(page > 1){
-      setPlants(oldValue => [ ...oldValue, ...data]); // Pega o valor antigo e adiciona o novo valor
-      setfilteredPlants(oldValue => [ ...oldValue, ...data]);
+      setPlants((oldValue) => [ ...oldValue, ...data]); // Pega o valor antigo e adiciona o novo valor
+      setFilteredPlants((oldValue) => [ ...oldValue, ...data]);
     } else {
       setPlants(data); // Pega o valor antigo e adiciona o novo valor
-      setfilteredPlants(data);
+      setFilteredPlants(data);
     }
 
     setLoading(false); // Após carregar encerra a animação de loading
@@ -76,7 +78,7 @@ export function PlantSelect() {
     if (distance < 1) return;
     
     setLoadingMore(true);
-    setPage(oldValue => oldValue + 1)
+    setPage((oldValue) => oldValue + 1)
     fetchPlants();
   }
 
@@ -85,13 +87,15 @@ export function PlantSelect() {
     // Criando função assincrona
     async function fetchEnviroment() {
       // desestrutura o retorno depois de aguardar o retorno da nossa api
-      const { data } = await api.get('plants_environments?_sort=title&_order=asc'); // Busca na rota da nossa api passando uma ordernção e o sort 
+      const { data } = await api.get(
+        'plants_environments?_sort=title&_order=asc'
+      ); // Busca na rota da nossa api passando uma ordernção e o sort 
       setEnviroments([
         {
           key: 'all',
           title: 'Todos',
         },
-        ...data 
+        ...data,
       ]);
     }
 
@@ -109,13 +113,9 @@ export function PlantSelect() {
       <View style={styles.header}>
         <Header />
 
-        <Text style={styles.title}>
-          Em qual hambiente 
-        </Text>
+        <Text style={styles.title}>Em qual hambiente</Text>
 
-        <Text style={styles.subtitle}>
-          você quer colocar sua planta?
-        </Text>
+        <Text style={styles.subtitle}>você quer colocar sua planta?</Text>
       </View>
 
       <View>
@@ -131,7 +131,7 @@ export function PlantSelect() {
           )}
           horizontal // Mostra na horizontal
           showsHorizontalScrollIndicator={false} // Desabilita a barra de scroll horizontal
-          contentContainerStyle={styles.enviromentList}
+          contentContainerStyle={styles.environmentList}
         />
       </View>
 
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.heading,
   },
-  enviromentList: {
+  environmentList: {
     height: 40,
     justifyContent: 'center',
     paddingBottom: 5,

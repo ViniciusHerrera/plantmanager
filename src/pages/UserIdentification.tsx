@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, TextInput
-  , KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+  , KeyboardAvoidingView, Platform, TouchableWithoutFeedback
+  , Keyboard, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 
 import { Button } from '../components/Button';

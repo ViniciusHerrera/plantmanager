@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { EnviromentButton } from '../components/EnviromentButton';
+import { EnvironmentButton } from '../components/EnvironmentButton';
 
 import { Header } from '../components/Header';
 import { PlantCardPrimary } from '../components/PlantCardPrimary';
@@ -17,14 +17,14 @@ interface EnviromentProps {
 }
 
 interface PlantProps {
-  id: string;
+  id: number;
   name: string;
   about: string;
   water_tips: string;
   photo: string;
-  environments: [string];
+  environments: string[];
   frequency: {
-    times: number,
+    times: number;
     repeat_every: string;
   }
 }
@@ -40,7 +40,6 @@ export function PlantSelect() {
   // Utilizado para paginação da nossa app
   const [ page, setPage ] = useState(1);
   const [ loadingMore, setLoadingMore ] = useState(false);
-  const [ loadedAll, setLoadedAll ] = useState(false);
 
   function handleEnviromentSelected(enviroment : string) {
     setEnviromentSelected(enviroment);
@@ -74,8 +73,7 @@ export function PlantSelect() {
   }
 
   function handleFetchMore(distance: number) {
-    if (distance < 1)
-      return;
+    if (distance < 1) return;
     
     setLoadingMore(true);
     setPage(oldValue => oldValue + 1)
@@ -86,7 +84,7 @@ export function PlantSelect() {
   useEffect(() => {
     // Criando função assincrona
     async function fetchEnviroment() {
-      // Desistrutura o retorno depois de aguardar o retorno da nossa api
+      // desestrutura o retorno depois de aguardar o retorno da nossa api
       const { data } = await api.get('plants_environments?_sort=title&_order=asc'); // Busca na rota da nossa api passando uma ordernção e o sort 
       setEnviroments([
         {
@@ -98,14 +96,13 @@ export function PlantSelect() {
     }
 
     fetchEnviroment();
-  },[]);
+  }, []);
 
   useEffect(() => {
     fetchPlants();
-  },[]);
+  }, []);
 
-  if(loading)
-    return <Load />
+  if(loading) return <Load />
 
   return (
     <View style={styles.container}>
@@ -125,8 +122,8 @@ export function PlantSelect() {
         {/* Recurso para criar uma lista de objetos no React-Native */}
         <FlatList 
           data={enviroments}
-          renderItem={({ item }) => ( //Desistruturando e pegando o item
-            <EnviromentButton
+          renderItem={({ item }) => ( //desestruturando e pegando o item
+            <EnvironmentButton
               title={item.title}
               active={item.key === enviromentSelected}
               onPress={() => handleEnviromentSelected(item.key)}
@@ -141,7 +138,7 @@ export function PlantSelect() {
       <View style={styles.plants}>
         <FlatList 
           data={filteredPlants}
-          renderItem={({ item }) => ( //Desistruturando e pegando o item
+          renderItem={({ item }) => ( //desestruturando e pegando o item
             <PlantCardPrimary
               data={ item }
             /> 

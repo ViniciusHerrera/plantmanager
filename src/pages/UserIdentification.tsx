@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, TextInput
+import {
+  SafeAreaView, StyleSheet, View, Text, TextInput
   , KeyboardAvoidingView, Platform, TouchableWithoutFeedback
-  , Keyboard, Alert } from 'react-native';
+  , Keyboard, Alert
+} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
+
+// Importação da lib para armazenar os dados na memoria interna do celular
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Button } from '../components/Button';
 
@@ -12,9 +17,9 @@ import fonts from '../styles/fonts';
 export function UserIdentification() {
   const navigation = useNavigation(); // Recurso do react para fazer a navegação nas telas
 
-  const [ isFocused, setIsFocused ] = useState(false);
-  const [ isFilled, setIsFilled ] = useState(false);
-  const [ name, setName ] = useState<string>(); // Utilizando tipagem para a variável
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFilled, setIsFilled] = useState(false);
+  const [name, setName] = useState<string>(); // Utilizando tipagem para a variável
 
   function handleInputBlur() {
     setIsFocused(false);
@@ -30,14 +35,30 @@ export function UserIdentification() {
     setName(value);
   }
 
-  function handleSubmit() {
-    navigation.navigate('Confirmation'); // Navega para a tela cujo nome definimos na nossa pilha de navegação
+  async function handleSubmit() {
+    if (!name)
+      return Alert.alert('Aaaaah...', 'Me diz como chamar você 😥');
+
+    try {
+      // Chamar o armazenamento na memoria
+      await AsyncStorage.setItem('@plantmanager:user', name);
+      navigation.navigate('Confirmation', {
+        title: 'Prontinho',
+        subtitle: 'Agora vamos começar a cuidar das suas plantinhas com muito cuidado.',
+        buttonTitle: 'Começar',
+        icon: 'smile',
+        nextScreen: 'PlantSelect',
+      }); // Navega para a tela cujo nome definimos na nossa pilha de navegação
+    } catch {
+      return Alert.alert('Atenção', 'Não foi possível salvar o seu nome!');
+    }
+
   }
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Utilizado para evitar que o teclado apareça emcima dos componentes */}
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={styles.container}
         //Verifica qual plataforma estamos utilizando e define o comportamento
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -51,7 +72,7 @@ export function UserIdentification() {
               {/* Utilizamos essa view para agrupar os componentes, assim quando abrir o teclado ele sobe mais macio */}
               <View style={styles.header}>
                 <Text style={styles.emoji}>
-                  { isFilled ? '😄' : '😀' /* If ternario para definir qual icone será apresentado */} 
+                  {isFilled ? '😄' : '😀' /* If ternario para definir qual icone será apresentado */}
                 </Text>
 
                 <Text style={styles.title}>
@@ -60,7 +81,7 @@ export function UserIdentification() {
                 </Text>
               </View>
 
-              <TextInput 
+              <TextInput
                 style={[
                   styles.input,
                   (isFocused || isFilled) && { borderColor: colors.green } // Operador de curto circuito
@@ -70,9 +91,9 @@ export function UserIdentification() {
                 onFocus={handleInputFocus}
                 onChangeText={handleInputChange}
               />
-              
+
               <View style={styles.footer}>
-                <Button 
+                <Button
                   title="Confirmar"
                   onPress={handleSubmit}
                 />
